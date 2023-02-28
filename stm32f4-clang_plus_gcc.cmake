@@ -5,7 +5,7 @@ string(REPLACE ";" "/" multi "${multi}")
 set(CMAKE_SYSROOT "/usr/lib/${triple}")
 
 if(NOT DEFINED GCC_VERSION)
-	set(GCC_VERSION "9.2.1")
+	set(GCC_VERSION "10.3.1")
 endif()
 
 # Clang
@@ -13,7 +13,7 @@ set(CMAKE_ASM_COMPILER clang)
 set(CMAKE_C_COMPILER clang)
 set(CMAKE_CXX_COMPILER clang++)
 set(CMAKE_ASM_FLAGS "-Wno-unused-command-line-argument")
-set(CMAKE_CXX_FLAGS "-stdlib=libstdc++ -isystem /usr/include/newlib/c++/${GCC_VERSION}/${triple}/${multi}")
+set(CMAKE_CXX_FLAGS "-stdlib=libstdc++ -isystem /usr/include/newlib/c++/${GCC_VERSION}/${triple}/${multi} -isystem /usr/include/newlib/c++/${GCC_VERSION}/arm-none-eabi")
 # GCC
 #set(CMAKE_ASM_COMPILER "${triple}-gcc")
 #set(CMAKE_C_COMPILER "${triple}-gcc")
