@@ -6,6 +6,11 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+message(${CMAKE_CURRENT_SOURCE_DIR})
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/llvm-ir-cmake-utils/cmake")
+
+include(LLVMIRUtil)
+
 #################################### OPTIONS ###################################
 
 option(CLOAD "Enable cload bootloader" ON)
@@ -453,11 +458,19 @@ target_sources(arm_math PRIVATE
 	"./cf_fw/vendor/CMSIS/CMSIS/DSP/Source/TransformFunctions/arm_rfft_q15.c"
 	"./cf_fw/vendor/CMSIS/CMSIS/DSP/Source/TransformFunctions/arm_rfft_q31.c")
 
+set_target_properties(arm_math PROPERTIES LINKER_LANGUAGE CXX)
+llvmir_attach_bc_target(arm_math_bc arm_math)
+add_dependencies(arm_math_bc arm_math)
+
 add_library(dw1000 STATIC)
 target_include_directories(dw1000 PUBLIC "./cf_fw/vendor/libdw1000/inc")
 target_sources(dw1000 PRIVATE
 	"./cf_fw/vendor/libdw1000/src/libdw1000.c"
 	"./cf_fw/vendor/libdw1000/src/libdw1000Spi.c")
+
+set_target_properties(dw1000 PROPERTIES LINKER_LANGUAGE CXX)
+llvmir_attach_bc_target(dw1000_bc dw1000)
+add_dependencies(dw1000_bc dw1000)
 
 add_library(stm32f4xx STATIC)
 target_link_libraries(stm32f4xx PRIVATE common cmsis warnings)
@@ -486,10 +499,14 @@ target_sources(stm32f4xx PRIVATE
 	"./cf_fw/src/lib/STM32F4xx_StdPeriph_Driver/src/stm32f4xx_misc.c"
 	"./cf_fw/src/lib/STM32F4xx_StdPeriph_Driver/src/stm32f4xx_syscfg.c")
 
+set_target_properties(stm32f4xx PROPERTIES LINKER_LANGUAGE CXX)
+llvmir_attach_bc_target(stm32f4xx_bc stm32f4xx)
+add_dependencies(stm32f4xx_bc stm32f4xx)
+
 add_executable(cf2)
 set_target_properties(cf2 PROPERTIES
 	OUTPUT_NAME "${OUTPUT_NAME}"
-	SUFFIX ".elf")
+	SUFFIX ".elf" LINKER_LANGUAGE CXX)
 
 add_dependencies(cf2 version_c)
 target_link_libraries(cf2 PRIVATE common warnings)
@@ -803,3 +820,6 @@ target_sources(cf2 PRIVATE
 target_include_directories(cf2 PRIVATE "./include")
 target_sources(cf2 PRIVATE
 	"./projects/cdr/src/main.cpp")
+
+llvmir_attach_bc_target(cf2_bc cf2)
+add_dependencies(cf2_bc cf2)

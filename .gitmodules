@@ -2,3 +2,6 @@
 	branch = ultimate
 	path = cf_fw
 	url = https://github.com/concatime/crazyflie-firmware.git
+[submodule "llvm-ir-cmake-utils"]
+	path = llvm-ir-cmake-utils
+	url = https://github.com/compor/llvm-ir-cmake-utils
